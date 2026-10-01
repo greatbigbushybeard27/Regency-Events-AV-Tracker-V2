@@ -17,11 +17,11 @@ button.secondary{background:#e5e7eb;color:#111827}.danger{background:#b91c1c!imp
 .badge{padding:5px 8px;border-radius:999px;font-size:12px;font-weight:700;background:#dcfce7;color:#166534}.out{background:#fee2e2;color:#991b1b}.maint{background:#fef3c7;color:#92400e}
 input,select{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:9px;margin:5px 0 10px;font-size:15px}
 label{font-size:13px;font-weight:650}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.hidden{display:none}.search{margin-bottom:8px}.empty{text-align:center;padding:35px 10px;color:#6b7280}
+.hidden{display:none}.modal.hidden{display:none!important}.modal.show{display:flex!important}.search{margin-bottom:8px}.empty{text-align:center;padding:35px 10px;color:#6b7280}
 #reader{width:100%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}.qr{width:150px;height:150px;image-rendering:auto}
 .small{font-size:11px;color:#6b7280}
 .progress{display:flex;gap:4px;overflow-x:auto;margin:10px 0}.step{padding:6px 8px;border-radius:999px;background:#e5e7eb;color:#4b5563;font-size:11px;font-weight:700;white-space:nowrap}.step.active{background:#111827;color:#fff}.step.done{background:#dcfce7;color:#166534}
-.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:flex-end;z-index:20}.sheet{background:white;width:100%;max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}.close{float:right}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:flex-end;z-index:20}.sheet{background:white;width:100%;max-height:calc(100vh - env(safe-area-inset-top));overflow:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(28px + env(safe-area-inset-bottom))}.close{float:right}
 
 .job-summary{margin-top:12px;border:1px solid #dbe1e8;border-radius:14px;padding:14px;background:#fff}
 .job-summary-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -43,7 +43,7 @@ label{font-size:13px;font-weight:650}.grid{display:grid;grid-template-columns:1f
 @media(min-width:650px){.stage-grid{grid-template-columns:repeat(6,1fr)}.detail-stat-grid{grid-template-columns:repeat(3,1fr)}}
 
 
-#modal{z-index:2000}
+#modal{z-index:9999!important}
 #modal .modal-content,#modal>div{position:relative;z-index:2001}
 #modal button{position:relative;z-index:2002}
 
@@ -58,7 +58,7 @@ label{font-size:13px;font-weight:650}.grid{display:grid;grid-template-columns:1f
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>
 body{padding-bottom:76px}
-.pwa-nav{position:fixed;left:0;right:0;bottom:0;z-index:999;background:#111827;border-top:1px solid #374151;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+.pwa-nav{position:fixed;left:0;right:0;bottom:0;z-index:100;background:#111827;border-top:1px solid #374151;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
 .pwa-nav button{background:transparent;border:0;color:#d1d5db;font-size:11px;padding:7px 8px;border-radius:10px}
 .pwa-nav button.active{background:#374151;color:#fff}
 .install-banner{position:fixed;left:12px;right:12px;bottom:74px;z-index:998;background:#fff;border:1px solid #d1d5db;border-radius:14px;padding:12px;box-shadow:0 8px 30px rgba(0,0,0,.2);display:none;color:#111}
@@ -309,11 +309,19 @@ async function scan(){
  },()=>{});}catch(e){alert('Camera could not start. Check browser camera permission.');}
 }
 function stopScan(){if(scanner){scanner.stop().catch(()=>{});scanner.clear().catch(()=>{});scanner=null;}}
+function closeModal(){
+  const m=document.getElementById('modal');
+  if(m){
+    m.classList.remove('show');
+    m.classList.add('hidden');
+  }
+}
 function openModal(body){
   const m=document.getElementById('modal');
   const b=document.getElementById('modalBody');
   if(!m||!b)return;
-  b.innerHTML=body+'<div style="margin-top:16px;text-align:right"><button class="secondary" onclick="closeModal()">Close</button></div>';
+  b.innerHTML=body;
+  m.classList.remove('hidden');
   m.classList.add('show');
 }
 if('serviceWorker' in navigator){
